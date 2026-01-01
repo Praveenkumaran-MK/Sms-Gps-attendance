@@ -1,0 +1,42 @@
+{
+  "name": "sms-gps",
+  "version": "1.0.0",
+  "description": "Phone number's current gps will be returned",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "sms-gps"
+  },
+  "keywords": [
+    "sms",
+    "based",
+    "attendance",
+    "Gps",
+    "based",
+    "attendance",
+    "offline",
+    "gps",
+    "keypad",
+    "phone",
+    "gps"
+  ],
+  "author": "Praveenkumaran-MK",
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.89.0",
+    "axios": "^1.13.2",
+    "body-parser": "^2.2.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "https": "^1.0.0",
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
