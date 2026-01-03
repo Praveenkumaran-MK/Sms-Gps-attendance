@@ -3,9 +3,9 @@ const cors = require('cors');
 require('dotenv').config();
 
 // Import routes
-const webhookRoutes = require('./routes/webhook.routes');
-const attendanceRoutes = require('./routes/attendance.routes');
-const adminRoutes = require('./routes/admin.routes');
+const trackingRoutes = require('./routes/tracking.routes');
+const managerRoutes = require('./routes/manager.routes');
+const testRoutes = require('./routes/test.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -25,8 +25,8 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => {
   res.json({
     status: 'online',
-    service: 'SMS-based GPS Attendance System',
-    version: '1.0.0',
+    service: 'GeoGuard - Hybrid Construction Attendance System',
+    version: '2.0.0',
     timestamp: new Date().toISOString()
   });
 });
@@ -40,9 +40,9 @@ app.get('/health', (req, res) => {
 });
 
 // Mount routes
-app.use('/webhook', webhookRoutes);
-app.use('/api', attendanceRoutes);
-app.use('/admin', adminRoutes);
+app.use('/api/test', testRoutes);
+app.use('/api/track', trackingRoutes);
+app.use('/api/manager', managerRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -63,10 +63,11 @@ app.use((req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`\n🚀 Server running on port ${PORT}`);
+  console.log(`\n🚀 GeoGuard Server running on port ${PORT}`);
   console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🌐 Health check: http://localhost:${PORT}/health`);
-  console.log(`📱 Webhook URL: ${process.env.APP_URL}/webhook/sms-received\n`);
+  console.log(`📱 SMS Webhook: ${process.env.APP_URL}/api/track/sms`);
+  console.log(`📊 Heartbeat API: ${process.env.APP_URL}/api/track/heartbeat\n`);
 });
 
 // Handle unhandled promise rejections

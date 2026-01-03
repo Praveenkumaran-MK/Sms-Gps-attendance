@@ -1,0 +1,118 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// =====================================================
+// ENUMS
+// =====================================================
+
+enum UserRole {
+  MANAGER
+  WORKER
+}
+
+enum PhoneType {
+  SMART
+  FEATURE
+}
+
+enum LocationMethod {
+  GPS
+  CELL
+  WIFI
+  PHONE
+}
+
+// =====================================================
+// MODELS
+// =====================================================
+
+model sites {
+  id                    String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name                  String
+  manager_id            String?   @db.Uuid
+  center_lat            Decimal   @db.Decimal(10, 7)
+  center_lng            Decimal   @db.Decimal(10, 7)
+  radius_meters         Int       @default(200)
+  rest_interval_minutes Int       @default(60)
+  is_active             Boolean   @default(true)
+  created_at            DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime  @default(now()) @db.Timestamptz(6)
+
+  // Relations
+  manager               users?    @relation("SiteManager", fields: [manager_id], references: [id], onDelete: SetNull)
+  workers               users[]   @relation("SiteWorkers")
+
+  @@index([manager_id], map: "idx_sites_manager")
+  @@index([is_active], map: "idx_sites_active")
+}
+
+model users {
+  id            String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name          String
+  phone         String    @unique
+  password_hash String?
+  role          UserRole
+  phone_type    PhoneType
+  site_id       String?   @db.Uuid
+  is_active     Boolean   @default(true)
+  created_at    DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime  @default(now()) @db.Timestamptz(6)
+
+  // Relations
+  sites              sites?           @relation("SiteWorkers", fields: [site_id], references: [id], onDelete: SetNull)
+  managed_sites      sites[]          @relation("SiteManager")
+  live_status        live_status?
+  attendance_logs    attendance_logs[]
+
+  @@index([phone], map: "idx_users_phone")
+  @@index([role], map: "idx_users_role")
+  @@index([site_id], map: "idx_users_site")
+  @@index([is_active], map: "idx_users_active")
+}
+
+model live_status {
+  user_id       String    @id @db.Uuid
+  last_lat      Decimal?  @db.Decimal(10, 7)
+  last_lng      Decimal?  @db.Decimal(10, 7)
+  is_inside     Boolean   @default(false)
+  last_seen     DateTime? @db.Timestamptz(6)
+  battery_level Int?
+  updated_at    DateTime  @default(now()) @db.Timestamptz(6)
+
+  // Relations
+  user          users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([is_inside], map: "idx_live_status_is_inside")
+  @@index([last_seen(sort: Desc)], map: "idx_live_status_last_seen")
+}
+
+model attendance_logs {
+  id                  String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id             String         @db.Uuid
+  timestamp           DateTime       @db.Timestamptz(6)
+  lat                 Decimal        @db.Decimal(10, 7)
+  lng                 Decimal        @db.Decimal(10, 7)
+  is_offline_sync     Boolean        @default(false)
+  distance_meters     Decimal?       @db.Decimal(10, 2)
+  is_inside_geofence  Boolean?
+  location_method     LocationMethod @default(GPS)
+  created_at          DateTime       @default(now()) @db.Timestamptz(6)
+
+  // Relations
+  user                users          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id], map: "idx_attendance_logs_user")
+  @@index([timestamp(sort: Desc)], map: "idx_attendance_logs_timestamp")
+  @@index([user_id, timestamp(sort: Desc)], map: "idx_attendance_logs_user_timestamp")
+  @@index([is_offline_sync], map: "idx_attendance_logs_offline_sync")
+}

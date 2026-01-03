@@ -7,6 +7,9 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js"
   },
+  "prisma":{
+    "seed": "node prisma/seed.js"
+  },
   "repository": {
     "type": "git",
     "url": "sms-gps"
@@ -27,14 +30,18 @@
   "author": "Praveenkumaran-MK",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^6.19.0",
     "@supabase/supabase-js": "^2.89.0",
     "axios": "^1.13.2",
+    "bcryptjs": "^3.0.3",
     "body-parser": "^2.2.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "https": "^1.0.0",
-    "node-fetch": "^2.7.0"
+    "node-cron": "^4.2.1",
+    "node-fetch": "^2.7.0",
+    "prisma": "^6.19.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"
