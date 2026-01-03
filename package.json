@@ -2,10 +2,10 @@
   "name": "sms-gps",
   "version": "1.0.0",
   "description": "Phone number's current gps will be returned",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js",
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
     "build": "npx prisma generate"
   },
   "prisma":{
