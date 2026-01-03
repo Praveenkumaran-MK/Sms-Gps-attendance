@@ -1,0 +1,12 @@
+# Render.com deployment configuration
+# https://render.com
+
+# Build Command
+build = "npm install && npx prisma generate"
+
+# Start Command  
+start = "node src/server.js"
+
+# Environment
+[env]
+  NODE_ENV = "production"
